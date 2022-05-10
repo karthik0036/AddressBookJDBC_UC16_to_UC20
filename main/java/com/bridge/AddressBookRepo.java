@@ -55,7 +55,7 @@ public class AddressBookRepo {
         return addressBookList;
 
     }
-    public void updateCityByZip(String address, String city, String state, int zip,String firstName) {
+    public void updateAddress(String address, String city, String state, int zip,String firstName) {
         try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
             String query = "Update addressBook set address=" + "'" + address + "'" + ", " + "city=" +"'" + city + "'" + ", " + "state=" + "'" + state + "'" + ", " + "zip=" + zip + " where firstName=" + firstName + ";";
@@ -68,5 +68,34 @@ public class AddressBookRepo {
             e.printStackTrace();
         }
 
+    }
+    public List<Contacts> findAllForParticularDate(LocalDate date) {
+        ResultSet resultSet = null;
+        List<Contacts> addressBookList = new ArrayList<Contacts>();
+        try (Connection connection = getConnection()) {
+            Statement statement = connection.createStatement();
+            String sql = "select * from AddressBook where date_added between cast(' "+ date + "'" +" as date)  and date(now());";
+            resultSet = statement.executeQuery(sql);
+            int count = 0;
+            while (resultSet.next()) {
+                Contacts contactInfo = new Contacts();
+                contactInfo.setFirstName(resultSet.getString("firstName"));
+                contactInfo.setLastName(resultSet.getString("Lastname"));
+                contactInfo.setAddress(resultSet.getString("address"));
+                contactInfo.setCity(resultSet.getString("city"));
+                contactInfo.setState(resultSet.getString("state"));
+                contactInfo.setZip(resultSet.getInt("zip"));
+                contactInfo.setPhoneNo(resultSet.getString("phoneNo"));
+                contactInfo.setEmail(resultSet.getString("email"));
+                contactInfo.setAddressBookName(resultSet.getString("addressBookName"));
+                contactInfo.setType(resultSet.getString("type"));
+                contactInfo.setDateAdded(resultSet.getDate("Date_added").toLocalDate());
+
+                addressBookList.add(contactInfo);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return addressBookList;
     }
 }

@@ -10,15 +10,20 @@ public class AddressBookJDBC {
 
         boolean exit = false;
         while (!exit) {
-            System.out.println(" Press\n 1 ->  Retrieve data\n 2 -> Update Address,city,state,zip  by name\n 3 -> exit");
+            System.out.println(" Select\n 1 ->  Retrieve data\n 2 -> Update Address,city,state,zip  by Name\n " +
+                    "3 Retrieve data for particular date" +
+                    "-> \n 4 -> exit");
             switch (scanner.nextInt()) {
                 case 1:
                     retrieveData();
                     break;
-                    case 2:
-                        updateCity();
-                        break;
+                case 2:
+                    update();
+                    break;
                 case 3:
+                    reteriveDataForParticularDate();
+                    break;
+                case 4:
                     exit = true;
             }
         }
@@ -32,9 +37,20 @@ public class AddressBookJDBC {
         }
     }
 
-    private static void updateCity() {
+    private static void update() {
         AddressBookRepo addressBookRepo = new AddressBookRepo();
-        System.out.println("Enter the address,city,state, zip and firsName  to Update");
-        addressBookRepo.updateCityByZip(scanner.next(), scanner.next(), scanner.next(), scanner.nextInt(), scanner.next());
+        System.out.println("Enter the address,city,state, zip and Serial Number  to Update");
+        addressBookRepo.updateAddress(scanner.next(), scanner.next(), scanner.next(), scanner.nextInt(), scanner.nextInt());
     }
+
+    private static void reteriveDataForParticularDate() {
+        AddressBookRepo addressBookRepo = new AddressBookRepo();
+        System.out.println("Enter the Date of Joining (YYYY-MM-DD");
+        System.out.println("Enter year , month and Day ex: 2020 02 03");
+        List<Contacts> employeeInfoList = addressBookRepo.findAllForParticularDate(LocalDate.of(scanner.nextInt(), scanner.nextInt(), scanner.nextInt()));
+        for (Contacts employee : employeeInfoList
+        ) {
+            System.out.println(employee + "\n");
+        }
+}
 }
