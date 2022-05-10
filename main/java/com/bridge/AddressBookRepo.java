@@ -8,7 +8,7 @@ public class AddressBookRepo {
 
     Connection connection;
 
-    private Connection getConnection() {
+    private static Connection getConnection() {
         String url = "jdbc:mysql://localhost:3306/address_book_services";
         String username = "root";
         String password = "password";
@@ -127,5 +127,32 @@ public class AddressBookRepo {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public static void insertData(Contacts add) throws SQLException {
+        Connection connection = getConnection();
+        try {
+            if (connection != null) {
+                connection.setAutoCommit(false);
+                Statement statement = connection.createStatement();
+                String sql = "insert into addressBook(firstname,lastname,address,city,state,zip,phoneNumber,email,bookName,contactType,date_added)" +
+                        "values('" + add.getFirstName() + "','" + add.getLastName() + "','" + add.getAddress() + "','" + add.getCity() +
+                        "','" + add.getState() + "','" + add.getZip() + "','" + add.getPhoneNo() + "','" +
+                        add.getEmail() + "','" + add.getAddressBookName() + "','" + add.getType() + "','" + add.getDateAdded() + "');";
+                int result = statement.executeUpdate(sql);
+                connection.commit();
+                if (result > 0) {
+                    System.out.println("Contact Inserted");
+                }
+                connection.setAutoCommit(true);
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Insertion Rollbacked");
+            connection.rollback();
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
     }
 }
